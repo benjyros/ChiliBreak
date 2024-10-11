@@ -2,13 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import ReactConfetti from 'react-confetti';
 import { BreakTime, breakTimes } from '@/types/breaTimes';
 
 function getNextBreakTime(now: Date): BreakTime | null {
+  if (now.getDay() === 0 || now.getDay() === 6) {
+    return null;
+  }
+
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   const todayBreak = breakTimes.find((breakTime) => {
@@ -16,7 +19,7 @@ function getNextBreakTime(now: Date): BreakTime | null {
     return breakMinutes > currentMinutes;
   });
 
-  return todayBreak || breakTimes[0];
+  return todayBreak || null;
 }
 
 function formatTime(milliseconds: number): string {
@@ -131,7 +134,7 @@ export default function BreakTimer() {
           ) : (
             <p className="text-center">No upcoming breaks</p>
           )}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mt-12">
             <Switch
               id="notifications"
               checked={notificationsEnabled}
