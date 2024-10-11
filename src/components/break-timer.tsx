@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import ReactConfetti from 'react-confetti';
 import { BreakTime, breakTimes } from '@/types/breaTimes';
+import next from 'next';
 
 function getNextBreakTime(now: Date): BreakTime | null {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -126,7 +127,7 @@ export default function BreakTimer() {
                 <div>
                   <p className="text-lg font-semibold mb-2">Next break: {nextBreak.label}</p>
                   <p className="text-sm text-gray-500 mb-4">
-                    At {nextBreak.hour.toString().padStart(2, '0')}:
+                    At Monday, {nextBreak.hour.toString().padStart(2, '0')}:
                     {nextBreak.minute.toString().padStart(2, '0')}
                   </p>
                 </div>
