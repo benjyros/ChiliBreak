@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import ReactConfetti from 'react-confetti';
-import { BreakTime, breakTimes } from '@/types/breaTimes';
+import { BreakTime, breakTimes } from '@/types/breakTimes';
 
 function getNextBreakTime(now: Date): BreakTime | null {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
