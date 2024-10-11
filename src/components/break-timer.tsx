@@ -8,10 +8,6 @@ import ReactConfetti from 'react-confetti';
 import { BreakTime, breakTimes } from '@/types/breaTimes';
 
 function getNextBreakTime(now: Date): BreakTime | null {
-  if (now.getDay() === 0 || now.getDay() === 6) {
-    return null;
-  }
-
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   const todayBreak = breakTimes.find((breakTime) => {
@@ -19,7 +15,7 @@ function getNextBreakTime(now: Date): BreakTime | null {
     return breakMinutes > currentMinutes;
   });
 
-  return todayBreak || null;
+  return todayBreak || breakTimes[0];
 }
 
 function formatTime(milliseconds: number): string {
@@ -35,6 +31,7 @@ function formatTime(milliseconds: number): string {
 }
 
 export default function BreakTimer() {
+  const [showTimer, setShowTimer] = useState<boolean>(false);
   const [nextBreak, setNextBreak] = useState<BreakTime | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(false);
@@ -78,6 +75,7 @@ export default function BreakTimer() {
         if (nextTime.getTime() <= now.getTime()) {
           nextTime.setDate(nextTime.getDate() + 1);
         }
+        setShowTimer(nextTime.getDay() === 0 || nextTime.getDay() === 6);
 
         const diff = Math.max(0, nextTime.getTime() - now.getTime());
         setTimeLeft(diff);
@@ -119,17 +117,29 @@ export default function BreakTimer() {
       {showConfetti && <ReactConfetti />}
       <Card className="w-96">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Break Timer</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">ChiliBreak</CardTitle>
         </CardHeader>
         <CardContent>
           {nextBreak ? (
             <div className="text-center">
-              <p className="text-lg font-semibold mb-2">Next break: {nextBreak.label}</p>
-              <p className="text-4xl font-bold mb-4">{formatTime(timeLeft)}</p>
-              <p className="text-sm text-gray-500 mb-4">
-                Time until {nextBreak.hour.toString().padStart(2, '0')}:
-                {nextBreak.minute.toString().padStart(2, '0')}
-              </p>
+              {showTimer ? (
+                <div>
+                  <p className="text-lg font-semibold mb-2">Next break: {nextBreak.label}</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    At {nextBreak.hour.toString().padStart(2, '0')}:
+                    {nextBreak.minute.toString().padStart(2, '0')}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-lg font-semibold mb-2">Next break: {nextBreak.label}</p>
+                  <p className="text-4xl font-bold mb-4">{formatTime(timeLeft)}</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Time until {nextBreak.hour.toString().padStart(2, '0')}:
+                    {nextBreak.minute.toString().padStart(2, '0')}
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-center">No upcoming breaks</p>
