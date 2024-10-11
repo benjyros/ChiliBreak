@@ -11,18 +11,12 @@ import { BreakTime, breakTimes } from '@/types/breaTimes';
 function getNextBreakTime(now: Date): BreakTime | null {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-  return (
-    breakTimes.reduce((nearest, breakTime) => {
-      const breakMinutes = breakTime.hour * 60 + breakTime.minute;
-      if (
-        breakMinutes > currentMinutes &&
-        (!nearest || breakMinutes < nearest.hour * 60 + nearest.minute)
-      ) {
-        return breakTime;
-      }
-      return nearest;
-    }, null as BreakTime | null) || breakTimes[0]
-  );
+  const todayBreak = breakTimes.find((breakTime) => {
+    const breakMinutes = breakTime.hour * 60 + breakTime.minute;
+    return breakMinutes > currentMinutes;
+  });
+
+  return todayBreak || breakTimes[0];
 }
 
 function formatTime(milliseconds: number): string {
@@ -76,6 +70,12 @@ export default function BreakTimer() {
           next.hour,
           next.minute
         );
+
+        // If the next break is earlier in the day than the current time, it's tomorrow
+        if (nextTime.getTime() <= now.getTime()) {
+          nextTime.setDate(nextTime.getDate() + 1);
+        }
+
         const diff = Math.max(0, nextTime.getTime() - now.getTime());
         setTimeLeft(diff);
 
@@ -110,6 +110,10 @@ export default function BreakTimer() {
         next.hour,
         next.minute
       );
+      // If the next break is earlier in the day than the current time, it's tomorrow
+      if (nextTime.getTime() <= now.getTime()) {
+        nextTime.setDate(nextTime.getDate() + 1);
+      }
       const diff = Math.max(0, nextTime.getTime() - now.getTime());
       setTimeLeft(diff);
     }
