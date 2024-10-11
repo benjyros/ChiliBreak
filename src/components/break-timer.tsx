@@ -98,27 +98,6 @@ export default function BreakTimer() {
     return () => clearInterval(timer);
   }, [notificationsEnabled, sendNotification]);
 
-  const resetTimer = () => {
-    const now = new Date();
-    const next = getNextBreakTime(now);
-    setNextBreak(next);
-    if (next) {
-      const nextTime = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        next.hour,
-        next.minute
-      );
-      // If the next break is earlier in the day than the current time, it's tomorrow
-      if (nextTime.getTime() <= now.getTime()) {
-        nextTime.setDate(nextTime.getDate() + 1);
-      }
-      const diff = Math.max(0, nextTime.getTime() - now.getTime());
-      setTimeLeft(diff);
-    }
-  };
-
   const toggleNotifications = async () => {
     if (!notificationsEnabled) {
       const permission = await Notification.requestPermission();
@@ -152,9 +131,6 @@ export default function BreakTimer() {
           ) : (
             <p className="text-center">No upcoming breaks</p>
           )}
-          <Button onClick={resetTimer} className="w-full mb-4">
-            Reset Timer
-          </Button>
           <div className="flex items-center space-x-2">
             <Switch
               id="notifications"
